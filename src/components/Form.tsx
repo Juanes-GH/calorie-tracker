@@ -21,7 +21,10 @@ export default function Form({dispatch, state}:FormProps) {
     const [ activity, setActivity ] = useState<Activity>(initialState)
 
     useEffect(() => {
-        
+        if(state.activityId){
+            const selectedActivity = state.activities.filter( stateActivity => stateActivity.id === state.activityId )[0]
+            setActivity(selectedActivity)
+        }
     },[state.activityId])
 
     const handleChange = (e: ChangeEvent<HTMLSelectElement>|ChangeEvent<HTMLInputElement>) => {

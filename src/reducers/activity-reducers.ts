@@ -2,7 +2,8 @@ import { Activity } from "../types"
 
 export type ActivitiActions = 
     {type:'save-activity', payload: {newActivity: Activity}} |
-    {type:'set-activeId', payload: {id: Activity['id']}} 
+    {type:'set-activeId', payload: {id: Activity['id']}} |
+    {type:'delete-activity', payload: {id: Activity['id']}} 
 
 export type ActivityState = {
     activities : Activity[],
@@ -21,9 +22,19 @@ export const activityReducer = (
 
     if(action.type === 'save-activity'){
         // Este codigo maneja la logica para actulizar el state
+
+        let updatedActivities : Activity[] = []
+
+        if(state.activityId){
+            updatedActivities = state.activities.map(activity => activity.id === state.activityId ? action.payload.newActivity : activity)
+        }else{
+            updatedActivities = [...state.activities, action.payload.newActivity]
+        }
+
         return {
-             ...state,
-             activities: [...state.activities, action.payload.newActivity]
+            ...state,
+            activities: updatedActivities,
+            activeId: ''
         }
     }
 
@@ -34,5 +45,11 @@ export const activityReducer = (
             activityId: action.payload.id
         }
     }
-    return state
+
+    if(action.type === 'delete-activity'){
+        return {
+            ...state,
+            activities: state.activities.filter(activity => activity.id !== action.payload.id)
+        }
+    }    return state
 }
